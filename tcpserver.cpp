@@ -1,5 +1,5 @@
 #include "tcpserver.h"
-
+#include"functionsforserver.h"
 
 TcpServer::TcpServer(QObject *parent) : QObject(parent) {
     mTcpServer = new QTcpServer(this);
@@ -45,7 +45,7 @@ void TcpServer::slotServerRead() {
     qDebug() << "Received from client:" << command;
 
     // Парсим команду и получаем ответ
-    QString response = mFunctionsForServer.parse(command);
+    QString response = parse(command);
 
     // Отправляем ответ клиенту
     mTcpSocket->write(response.toUtf8());

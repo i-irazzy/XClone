@@ -1,7 +1,6 @@
 #ifndef TCPSERVER_H
 #define TCPSERVER_H
 
-#include"functionsforserver.h"
 #include<QTcpServer>
 #include<QObject>
 #include<QTcpSocket>
@@ -28,7 +27,6 @@ private:
     QTcpServer *mTcpServer; //указатель на TCP-сервер
     QTcpSocket *mTcpSocket; //указатель на текущий клиентский сокет
 
-    FunctionsForServer mFunctionsForServer;  //добавляем объект для работы с функциями сервера
 
 };
 

@@ -18,7 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    #databasemanager.cpp \
+    databasemanager.cpp \
     functionsforserver.cpp \
     main.cpp \
     #post.cpp \
@@ -32,7 +32,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     #post.h \
-    #databasemanager.h \
+    databasemanager.h \
     functionsforserver.h \
     tcpserver.h \
     #user.h
