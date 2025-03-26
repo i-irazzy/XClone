@@ -20,34 +20,48 @@ void TcpServer::startServer() {
 
 void TcpServer::stopServer() {
     mTcpServer->close(); // Закрываем сервер
+    for (QTcpSocket* client: Clients){
+        client -> disconnect();
+        client -> deleteLater();
+    }
+    Clients.clear();
+
     qDebug() << "Server stopped.";
 }
 
 void TcpServer::handleNewConnection() {
-    mTcpSocket = mTcpServer->nextPendingConnection(); // Получаем следующий подключившийся сокет
+    QTcpSocket *clientSocket = mTcpServer -> nextPendingConnection();
+    Clients.append(clientSocket);
 
     // Подключаем сигналы для чтения данных и отключения клиента
-    connect(mTcpSocket, &QTcpSocket::readyRead, this, &TcpServer::slotServerRead);
-    connect(mTcpSocket, &QTcpSocket::disconnected, this, &TcpServer::slotClientDisconnected);
+    connect(clientSocket, &QTcpSocket::readyRead, this, &TcpServer::slotServerRead);
+    connect(clientSocket, &QTcpSocket::disconnected, this, &TcpServer::slotClientDisconnected);
 
-    qDebug() << "New client connected:" << mTcpSocket->peerAddress().toString();
+    qDebug() << "New client connected:" << clientSocket->peerAddress().toString();
 }
 
 void TcpServer::slotClientDisconnected() {
-    qDebug() << "Client disconnected:" << mTcpSocket->peerAddress().toString();
-    mTcpSocket->deleteLater(); // Удаляем сокет
+    QTcpSocket *clientSocket = qobject_cast<QTcpSocket*>(sender());
+    if(clientSocket){
+        qDebug() << "Client disconected:" << clientSocket -> peerAddress().toString();
+        Clients.removeOne(clientSocket);
+        clientSocket ->deleteLater();
+    }
 }
 
 void TcpServer::slotServerRead() {
-    QByteArray data = mTcpSocket->readAll(); // Читаем все доступные данные
-    QString command = QString::fromUtf8(data).trimmed(); // Преобразуем в строку и убираем лишние пробелы
+    QTcpSocket *clientSocket = qobject_cast<QTcpSocket*>(sender());
+    if(clientSocket){
+        QByteArray data = clientSocket->readAll();
+        QString command = QString::fromUtf8(data).trimmed();
 
-    qDebug() << "Received from client:" << command;
+        qDebug() <<"Recived from client:" << command;
 
-    // Парсим команду и получаем ответ
-    QString response = parse(command);
+        QString response = parse(command);
 
-    // Отправляем ответ клиенту
-    mTcpSocket->write(response.toUtf8());
+        clientSocket->write(response.toUtf8());
+    }
+
+
 }
 
