@@ -19,13 +19,13 @@ void TcpServer::startServer() {
 }
 
 void TcpServer::stopServer() {
-    mTcpServer->close(); // Закрываем сервер
     for (QTcpSocket* client: Clients){
         client -> disconnect();
         client -> deleteLater();
     }
     Clients.clear();
 
+    mTcpServer->close(); // Закрываем сервер
     qDebug() << "Server stopped.";
 }
 
