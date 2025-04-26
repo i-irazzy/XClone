@@ -28,6 +28,28 @@ DatabaseManager* DatabaseManager::getInstance() {
     return p_instance;
 }
 
+bool DatabaseManager::initializeDatabase(const QString& dbPath) {
+    if (!connect(dbPath)) {
+        return false;
+    }
+
+    const QString createUsersTable = "CREATE TABLE IF NOT EXISTS users ("
+                                     "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                     "username TEXT UNIQUE NOT NULL, "
+                                     "password TEXT NOT NULL);";
+    const QString createTweetsTable = "CREATE TABLE IF NOT EXISTS tweets ("
+                                      "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                      "username TEXT NOT NULL, "
+                                      "tweet TEXT NOT NULL);";
+    const QString createFollowsTable = "CREATE TABLE IF NOT EXISTS follows ("
+                                       "follower TEXT NOT NULL, "
+                                       "followee TEXT NOT NULL);";
+
+    return executeQuery(createUsersTable) &&
+           executeQuery(createTweetsTable) &&
+           executeQuery(createFollowsTable);
+}
+
 //подключение к базе данных по указанному пути
 bool DatabaseManager::connect(const QString& dbPath) {
     // Устанавливаем имя базы данных (путь к файлу)

@@ -37,7 +37,7 @@ private:
 public:
     //метод для получения единственного экземпляра класса
     static DatabaseManager* getInstance();
-
+    bool initializeDatabase(const QString& dbPath);
     //публичные методы для обработки запросов
     QByteArray auth(const QString& log, const QString& pass);  //авторизация пользователя
     QByteArray reg(const QString& log, const QString& pass);  //регистрация пользователя
