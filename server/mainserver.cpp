@@ -17,4 +17,3 @@ int main(int argc, char *argv[]) {
     server.startServer();
     return a.exec();
 }
-

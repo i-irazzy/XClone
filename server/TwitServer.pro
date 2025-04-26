@@ -20,7 +20,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     databasemanager.cpp \
     functionsforserver.cpp \
-    main.cpp \
+    mainserver.cpp \
     #post.cpp \
     tcpserver.cpp \
     #user.cpp
