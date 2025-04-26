@@ -6,6 +6,8 @@
 #include<QTcpSocket>
 #include<QByteArray>
 #include<QDebug>
+#include<QList>
+
 
 class TcpServer : public QObject
 {
@@ -25,7 +27,7 @@ private slots:
 
 private:
     QTcpServer *mTcpServer; //указатель на TCP-сервер
-    QTcpSocket *mTcpSocket; //указатель на текущий клиентский сокет
+    QList<QTcpSocket*> Clients;
 
 
 };
