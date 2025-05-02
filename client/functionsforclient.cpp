@@ -2,23 +2,23 @@
 #include "clientapi.h"
 
 bool auth(QString login, QString password) {
-//    if(login == "user" && password == "123"){
-//        return true;
-//    }
-//    return false;
-    QString request = QString("AUTH|%1|%2").arg(login, password);
-    QByteArray response = ClientAPI::getInstance()->query_to_server(request);
-    return response.trimmed() == "OK";
+   if(login == "user" && password == "123"){
+       return true;
+   }
+   return false;
+    // QString request = QString("AUTH|%1|%2").arg(login, password);
+    // QByteArray response = ClientAPI::getInstance()->query_to_server(request);
+    // return response.trimmed() == "OK";
 }
 
 bool reg(QString login, QString password, QString email) {
-//    if(login != "user" && password != "123"){
-//        return true;
-//    }
-//    return false;
-    QString request = QString("REG|%1|%2|%3").arg(login, password, email);
-        QByteArray response = ClientAPI::getInstance()->query_to_server(request);
-        return response.trimmed() == "OK";
+   if(login != "user" && password != "123"){
+       return true;
+   }
+   return false;
+    // QString request = QString("REG|%1|%2|%3").arg(login, password, email);
+    //     QByteArray response = ClientAPI::getInstance()->query_to_server(request);
+    //     return response.trimmed() == "OK";
 }
 
 //QList<Post> searchPosts(const QString& query) {

@@ -7,6 +7,9 @@
 #include <QListView>
 #include <QAbstractListModel>
 #include <QString>
+#include <QMessageBox>
+#include <QVBoxLayout>    // Добавлен для управления компоновкой элементов
+#include <QHBoxLayout>    // Добавлен для горизонтальных элементов
 #include "newpostform.h"
 #include "clientapi.h"
 #include "functionsforclient.h"
@@ -21,8 +24,6 @@ struct Post {
     QString header;
     QString text;
 };
-
-
 
 class PostModel : public QAbstractListModel {
     Q_OBJECT
@@ -44,6 +45,9 @@ public:
     ~MainWindow();
     void setCurrentUser(const QString &username);
 
+    // Метод для обновления отображения формы поста
+    void showNewPostForm();
+
 private:
     Ui::MainWindow *ui;
     PostModel *model;
@@ -52,9 +56,11 @@ private:
     QString currentUser;
     ClientAPI *client;
 
+    QVBoxLayout *mainLayout;   // Добавлен главный вертикальный компоновщик
+    QHBoxLayout *buttonLayout; // Добавлен компоновщик кнопок
+
 private slots:
     void SearchPosts();
-    void showNewPostForm();
     void onNewPostCreated(QString username, QString header, QString text);
     void on_pushButtonNewPost_clicked();
 };

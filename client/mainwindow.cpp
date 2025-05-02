@@ -78,7 +78,12 @@ void MainWindow::SearchPosts() {
 
 void MainWindow::on_pushButtonNewPost_clicked() {
     newPostForm->setCurrentUser(currentUser);
+
+    // Добавляем корректное отображение формы
+    newPostForm->setWindowFlags(Qt::Window);  // Делаем виджет отдельным окном
     newPostForm->show();
+    newPostForm->raise();
+    newPostForm->activateWindow();
 }
 
 void MainWindow::onNewPostCreated(QString username, QString header, QString text) {
@@ -89,8 +94,12 @@ void MainWindow::onNewPostCreated(QString username, QString header, QString text
     }
 }
 
-
 void MainWindow::showNewPostForm() {
     newPostForm->setCurrentUser(currentUser);
+
+    // Корректируем отображение формы
+    newPostForm->setWindowFlags(Qt::Window);
     newPostForm->show();
+    newPostForm->raise();
+    newPostForm->activateWindow();
 }

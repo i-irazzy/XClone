@@ -20,6 +20,7 @@ public:
     QString getHeader() const;
     QString getText() const;
 
+    void showAndRaise();
 
 public slots:
     void setCurrentUser(const QString &username);

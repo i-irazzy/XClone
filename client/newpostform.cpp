@@ -1,6 +1,17 @@
 #include "newpostform.h"
 #include "ui_newpostform.h"
 
+void NewPostForm::showAndRaise()
+{
+    this->setWindowFlags(Qt::Window); // Сделаем виджет отдельным окном
+    this->show();
+    this->raise();
+    this->activateWindow();
+    this->updateGeometry(); // Обновляем расположение виджета
+}
+
+
+
 NewPostForm::NewPostForm(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::NewPostForm)
