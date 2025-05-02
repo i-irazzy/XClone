@@ -1,0 +1,85 @@
+#include "authregform.h"
+#include "ui_authregform.h"
+
+
+AuthRegForm::AuthRegForm(QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::AuthForm)
+{
+   ui->setupUi(this);
+   change_type_to_reg(false);
+
+}
+
+AuthRegForm::~AuthRegForm()
+{
+    delete ui;
+}
+
+void AuthRegForm::change_type_to_reg(bool is_reg){
+
+    ui->labelPassword_Check->setVisible(is_reg);
+    ui->labelEmail->setVisible(is_reg);
+    ui->lineEdit_PasswordCheck->setVisible(is_reg);
+    ui->lineEditEmail->setVisible(is_reg);
+    ui->pushButtonSignUp->setVisible(is_reg);
+
+    ui->pushButtonLogIn->setVisible(!is_reg);
+    ui->pushButtonToReg->setText(is_reg? "to Log" : "to Reg");
+}
+
+
+
+void AuthRegForm::on_pushButtonToReg_clicked()
+{
+    this->change_type_to_reg(ui->pushButtonLogIn->isVisible());
+}
+
+
+void AuthRegForm::on_pushButtonLogIn_clicked()
+{
+    QString username = ui->lineEditLogin->text().trimmed();
+    QString password = ui->lineEditPassword->text().trimmed();
+
+    if (username.isEmpty() || password.isEmpty()) {
+        QMessageBox::warning(this, "Ошибка", "Пожалуйста, заполните все поля.");
+        return;
+    }
+    if(auth(username,password)){
+        emit auth_ok(username);
+        this->close();
+    }
+    else
+    {
+        QMessageBox::warning(this, "Ошибка", "Неверный логин или пароль.");
+        return;
+    }
+
+}
+
+void AuthRegForm:: clear(){
+    ui->lineEditLogin->clear();
+    ui->lineEditPassword->clear();
+    ui->lineEditEmail->clear();
+    ui->lineEdit_PasswordCheck->clear();
+
+}
+
+void AuthRegForm::on_pushButtonSignUp_clicked()
+{
+    if(ui->lineEditPassword->text() != ui->labelPassword_Check->text()){ // if (ui->lineEditPassword->text() != ui->lineEdit_PasswordCheck->text()) {
+        this->clear();
+    }
+    else{
+        if (reg(ui->lineEditLogin->text(),
+            ui->lineEditPassword->text(),
+                ui->lineEditEmail->text())){
+            emit auth_ok(ui->lineEditLogin->text());
+            this->accept();
+        }
+        else{
+            this->clear();
+        }
+    }
+}
+
