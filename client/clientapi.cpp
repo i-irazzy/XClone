@@ -23,6 +23,16 @@ ClientAPI* ClientAPI::getInstance(){
     return p_instance;
 }
 
+
+void ClientAPI::setInstance(ClientAPI* newInstance) {
+    if (p_instance) {
+        delete p_instance;
+    }
+    p_instance = newInstance;
+    destroyer.initialize(p_instance);
+}
+
+
 ClientAPI:: ClientAPI(QObject *parent){
 
     mTcpSocket = new QTcpSocket(this);// инициализируется сокет

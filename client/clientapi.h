@@ -37,9 +37,12 @@ protected:
     ClientAPI& operator = (ClientAPI &) = delete;
 
     friend class SingletonDestroyer;
+
+     static ClientAPI* instance;
 public:
     static ClientAPI* getInstance();
      QByteArray query_to_server(QString);
+    static void setInstance(ClientAPI* instance);
 signals:
     void disconnected();
 public slots:
