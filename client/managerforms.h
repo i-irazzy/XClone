@@ -6,24 +6,50 @@
 #include "mainwindow.h"
 
 namespace Ui {
-class ManagerForms;  // Объявление класса, сгенерированного Qt для интерфейса
+class ManagerForms;
 }
 
+/**
+ * @brief Главное окно приложения, управляющее переходом между формой авторизации и основной формой.
+ */
 class ManagerForms : public QMainWindow
 {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Конструктор окна ManagerForms.
+     * @param parent Родительский виджет.
+     */
     explicit ManagerForms(QWidget *parent = nullptr);
+
+    /**
+     * @brief Деструктор.
+     */
     ~ManagerForms();
 
 private slots:
+    /**
+     * @brief Слот, вызываемый после успешной авторизации.
+     * @param username Имя пользователя, вошедшего в систему.
+     */
     void onAuthSuccess(QString username);
 
 private:
-    Ui::ManagerForms *ui;  // Указатель на сгенерированный интерфейс
-    AuthRegForm* curr_auth;  // Указатель на форму авторизации/регистрации
-    MainWindow* main_form;   // Указатель на основное окно с постами
+    /**
+     * @brief Интерфейс, сгенерированный Qt Designer.
+     */
+    Ui::ManagerForms *ui;
+
+    /**
+     * @brief Указатель на форму авторизации и регистрации.
+     */
+    AuthRegForm* curr_auth;
+
+    /**
+     * @brief Указатель на основное окно приложения (список постов).
+     */
+    MainWindow* main_form;
 };
 
-#endif
+#endif // MANAGERFORMS_H

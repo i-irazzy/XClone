@@ -21,26 +21,6 @@ bool reg(QString login, QString password, QString email) {
     //     return response.trimmed() == "OK";
 }
 
-//QList<Post> searchPosts(const QString& query) {
-//    QList<Post> result;
-
-//    QByteArray response = ClientAPI::getInstance()->query_to_server("SEARCH|" + query);
-
-//    QList<QByteArray> lines = response.split('\n');
-//    for (const QByteArray& line : lines) {
-//        QList<QByteArray> parts = line.split('|');
-//        if (parts.size() == 3) {
-//            Post post;
-//            post.username = QString::fromUtf8(parts[0]);
-//            post.header   = QString::fromUtf8(parts[1]);
-//            post.text     = QString::fromUtf8(parts[2]);
-//            result.append(post);
-//        }
-//    }
-
-//    return result;
-//}
-
 bool createNewPost(const QString& username, const QString& header, const QString& text) {
     QString request = QString("CREATE|%1|%2|%3").arg(username, header, text);
     QByteArray response = ClientAPI::getInstance()->query_to_server(request);

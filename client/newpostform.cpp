@@ -67,10 +67,7 @@ void NewPostForm::on_pushButtonPost_clicked()
     clearFields();
 }
 
-
-
 void NewPostForm::on_pushButtonCancel_clicked()
 {
     this->close();
 }
-

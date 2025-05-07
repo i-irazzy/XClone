@@ -8,55 +8,171 @@
 #include <QByteArray>
 
 
-//класс-уничтожитель для управления временем жизни единственного экземпляра DatabaseManager
+/// Класс-уничтожитель для управления временем жизни единственного экземпляра DatabaseManager
 class DatabaseManagerDestroyer;
 
-//класс DatabaseManager реализует singleton для управления подключением к базе данных
+/**
+ * @brief Класс DatabaseManager реализует шаблон Singleton
+ * для управления подключением и работой с базой данных.
+ */
 class DatabaseManager
 {
 private:
-    static DatabaseManager* p_instance;  //указатель на единственный экземпляр класса
-    static DatabaseManagerDestroyer destroyer;  //объект-уничтожитель для корректного удаления экземпляра
+    /**
+     * @brief Указатель на единственный экземпляр класса.
+     */
+    static DatabaseManager* p_instance;
 
-    QSqlDatabase db;  //объект базы данных
+    /**
+     * @brief Объект-уничтожитель для корректного удаления экземпляра.
+     */
+    static DatabaseManagerDestroyer destroyer;
 
-    //приватные конструкторы и операторы (для предотвращения создания копий)
-    DatabaseManager();  //конструктор по умолчанию
-    DatabaseManager(const DatabaseManager&) = delete;  //запрещаем копирование
-    DatabaseManager& operator=(const DatabaseManager&) = delete;  //запрещаем присваивание
-    ~DatabaseManager();  //деструктор
+    /**
+     * @brief Объект базы данных.
+     */
+    QSqlDatabase db;
 
-    friend class DatabaseManagerDestroyer;  //разрешаем доступ к приватным методам для уничтожителя
+    /**
+     * @brief Приватный конструктор.
+     */
+    DatabaseManager();
 
-    // приватные методы для работы с базой данных
-    bool connect(const QString& dbPath);  //подключение к базе данных
-    void disconnect();  //отключение от базы данных
-    bool executeQuery(const QString& query);  //выполнение SQL-запроса
-    QSqlQuery getQueryResult(const QString& query);  //получение результата SQL-запроса
+    /**
+     * @brief Удаляем копирующий конструктор.
+     */
+    DatabaseManager(const DatabaseManager&) = delete;
+
+    /**
+     * @brief Удаляем оператор присваивания.
+     */
+    DatabaseManager& operator=(const DatabaseManager&) = delete;
+
+    /**
+     * @brief Деструктор.
+     */
+    ~DatabaseManager();
+
+    friend class DatabaseManagerDestroyer;
+
+    /**
+     * @brief Подключение к базе данных.
+     * @param dbPath Путь к файлу базы данных.
+     * @return true при успешном подключении.
+     */
+    bool connect(const QString& dbPath);
+
+    /**
+     * @brief Отключение от базы данных.
+     */
+    void disconnect();
+
+    /**
+     * @brief Выполнение SQL-запроса.
+     * @param query Строка SQL-запроса.
+     * @return true при успешном выполнении.
+     */
+    bool executeQuery(const QString& query);
+
+    /**
+     * @brief Получение результата SQL-запроса.
+     * @param query Строка SQL-запроса.
+     * @return Объект QSqlQuery с результатами.
+     */
+    QSqlQuery getQueryResult(const QString& query);
 
 public:
-    //метод для получения единственного экземпляра класса
+    /**
+     * @brief Получение единственного экземпляра DatabaseManager.
+     * @return Указатель на экземпляр DatabaseManager
+     */
     static DatabaseManager* getInstance();
+
+    /**
+     * @brief Инициализация базы данных и создание таблиц.
+     * @param dbPath Путь к файлу базы данных
+     * @return true при успешной инициализации
+     */
     bool initializeDatabase(const QString& dbPath);
-    //публичные методы для обработки запросов
-    QByteArray auth(const QString& log, const QString& pass);  //авторизация пользователя
-    QByteArray reg(const QString& log, const QString& pass);  //регистрация пользователя
-    QByteArray getPostsByUser(const QString& log);  //поиск постов по пользователю
-    QByteArray getPostsByText(const QString &text);  //поиск постов по словам
-    QByteArray createPost(const QString& log, const QString& post);  //создание поста
-    QByteArray getAllPosts();  //получение всех постов
-    QByteArray delPost(const QString& username, int postId); //удаление поста
+
+    /**
+     * @brief Авторизация пользователя.
+     * @param log Логин.
+     * @param pass Пароль.
+     * @return Результат авторизации в виде QByteArray.
+     */
+    QByteArray auth(const QString& log, const QString& pass);
+
+    /**
+     * @brief Регистрация нового пользователя.
+     * @param log Логин.
+     * @param pass Пароль.
+     * @return Результат регистрации в виде QByteArray.
+     */
+    QByteArray reg(const QString& log, const QString& pass);
+
+    /**
+     * @brief Получение постов пользователя.
+     * @param log Логин пользователя.
+     * @return Список постов в виде QByteArray.
+     */
+    QByteArray getPostsByUser(const QString& log);
+
+    /**
+     * @brief Поиск постов по ключевому слову.
+     * @param text Ключевое слово.
+     * @return Найденные посты в виде QByteArray.
+     */
+    QByteArray getPostsByText(const QString& text);
+
+    /**
+     * @brief Создание нового поста.
+     * @param log Логин пользователя.
+     * @param post Текст поста.
+     * @return Результат создания поста.
+     */
+    QByteArray createPost(const QString& log, const QString& post);
+
+    /**
+    * @brief Получение всех постов.
+    * @return Все посты в виде QByteArray.
+    */
+   QByteArray getAllPosts();
+
+   /**
+    * @brief Удаление поста.
+    * @param username Логин пользователя.
+    * @param postId ID поста.
+    * @return Результат удаления.
+    */
+   QByteArray delPost(const QString& username, int postId);
+
 };
 
-//класс-уничтожитель для управления временем жизни экземпляра DatabaseManager
+/**
+ * @brief Класс-уничтожитель для DatabaseManager.
+ * Используется для безопасного удаления Singleton-объекта.
+ */
 class DatabaseManagerDestroyer
 {
 private:
-    DatabaseManager* p_instance;  //указатель на экземпляр DatabaseManager
+    /**
+     * @brief Указатель на экземпляр DatabaseManager.
+     */
+    DatabaseManager* p_instance;
 
 public:
-    ~DatabaseManagerDestroyer() { delete p_instance; }  // дструктор, который удаляет экземпляр
-    void initialize(DatabaseManager* p) { p_instance = p; }  // инициализация указателя
+    /**
+     * @brief Деструктор, который удаляет экземпляр.
+     */
+    ~DatabaseManagerDestroyer() { delete p_instance; }
+
+    /**
+     * @brief Инициализация экземпляра DatabaseManager.
+     * @param p Указатель на DatabaseManager.
+     */
+    void initialize(DatabaseManager* p) { p_instance = p; }
+
 };
 
 #endif // DATABASEMANAGER_H
