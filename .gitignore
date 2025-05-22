@@ -17,7 +17,7 @@
 *.dll
 
 # Fortran module files
-*.mod
+*.modd
 *.smod
 
 # Compiled Static libraries
@@ -32,4 +32,5 @@
 *.app
 
 *.pro.user
+*.idx
 
