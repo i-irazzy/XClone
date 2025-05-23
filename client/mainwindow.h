@@ -12,7 +12,7 @@
 #include <QHBoxLayout>    // Добавлен для горизонтальных элементов
 #include "newpostform.h"
 #include "clientapi.h"
-#include "functionsforclient.h"
+// #include "functionsforclient.h"
 
 namespace Ui {
 class MainWindow;

@@ -50,14 +50,28 @@ void TcpServer::slotClientDisconnected() {
 
 void TcpServer::slotServerRead() {
     QTcpSocket *clientSocket = qobject_cast<QTcpSocket*>(sender()); ///< Получаем сокет клиента
-    if (clientSocket) {
-        QByteArray data = clientSocket->readAll(); ///< Читаем все данные
-        QString command = QString::fromUtf8(data).trimmed(); ///< Преобразуем в строку и удаляем пробелы
+    if (!clientSocket) {
+        qDebug() << "Ошибка: клиентский сокет не найден!";
+        return;
+    }
 
-        qDebug() << "Получено от клиента: " << command; ///< Лог команды
+    QByteArray data = clientSocket->readAll(); ///< Читаем все данные
+    QString command = QString::fromUtf8(data).trimmed(); ///< Преобразуем в строку и удаляем пробелы
 
-        QString response = parse(command); ///< Обработка команды
+    if (command.isEmpty()) {
+        qDebug() << "Ошибка: получена пустая команда!";
+        return;
+    }
 
+    qDebug() << "Получено от клиента: " << command; ///< Лог команды
+
+    QString response = parse(command); ///< Обработка команды
+
+    if (clientSocket->state() == QAbstractSocket::ConnectedState) {
         clientSocket->write(response.toUtf8()); ///< Отправка ответа клиенту
+        clientSocket->flush(); ///< Гарантированная отправка данных
+    } else {
+        qDebug() << "Ошибка: клиент уже отключился, ответ не отправлен.";
     }
 }
+

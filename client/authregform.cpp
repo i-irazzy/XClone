@@ -67,19 +67,31 @@ void AuthRegForm:: clear(){
 
 void AuthRegForm::on_pushButtonSignUp_clicked()
 {
-    if(ui->lineEditPassword->text() != ui->labelPassword_Check->text()){ // if (ui->lineEditPassword->text() != ui->lineEdit_PasswordCheck->text()) {
-        this->clear();
+    QString username = ui->lineEditLogin->text().trimmed();
+    QString password = ui->lineEditPassword->text().trimmed();
+    QString passwordCheck = ui->lineEdit_PasswordCheck->text().trimmed();
+    QString email = ui->lineEditEmail->text().trimmed();
+
+    if (username.isEmpty() || password.isEmpty() || email.isEmpty()) {
+        QMessageBox::warning(this, "Ошибка", "Пожалуйста, заполните все поля.");
+        return;
     }
-    else{
-        if (reg(ui->lineEditLogin->text(),
-            ui->lineEditPassword->text(),
-                ui->lineEditEmail->text())){
-            emit auth_ok(ui->lineEditLogin->text());
-            this->accept();
-        }
-        else{
-            this->clear();
-        }
+
+    if (password != passwordCheck) {
+        QMessageBox::warning(this, "Ошибка", "Пароли не совпадают.");
+        clear();
+        return;
+    }
+
+    QString request = QString("REGISTER|%1|%2|%3").arg(username, password, email);
+    QByteArray response = ClientAPI::getInstance()->query_to_server(request);
+
+    if (response.trimmed() == "reg+") {
+        emit auth_ok(username);
+        this->accept();
+    } else {
+        QMessageBox::warning(this, "Ошибка", "Не удалось зарегистрироваться.");
+        clear();
     }
 }
 

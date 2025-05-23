@@ -5,7 +5,6 @@ release/mainclient.o
 release/mainwindow.o
 release/managerforms.o
 release/newpostform.o
-release/testclientfunctions.o
 release/moc_authregform.o
 release/moc_clientapi.o
 release/moc_mainwindow.o

@@ -20,7 +20,7 @@ SOURCES += \
     mainwindow.cpp \
     managerforms.cpp \
     newpostform.cpp \
-    testclientfunctions.cpp
+    # testclientfunctions.cpp
 
 HEADERS += \
 #    ../ConsolClient/clienapi.h \

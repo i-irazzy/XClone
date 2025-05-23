@@ -29,24 +29,36 @@ DatabaseManager* DatabaseManager::getInstance() {
 
 ///< Инициализация базы данных и создание таблиц
 bool DatabaseManager::initializeDatabase(const QString& dbPath) {
+
     if (!connect(dbPath)) {
+        qDebug() << "Ошибка подключения к базе данных!";
         return false;
     }
 
-    ///< Создаем таблицу пользователей
+    ///< Создаем новую таблицу пользователей
     const QString createUsersTable = "CREATE TABLE IF NOT EXISTS users ("
                                      "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                                      "username TEXT UNIQUE NOT NULL, "
-                                     "password TEXT NOT NULL);";
+                                     "password TEXT NOT NULL, "
+                                     "email TEXT NOT NULL);";
+    bool usersTableCreated = executeQuery(createUsersTable);
 
     ///< Создаем таблицу постов
     const QString createTweetsTable = "CREATE TABLE IF NOT EXISTS tweets ("
                                       "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                                       "username TEXT NOT NULL, "
                                       "tweet TEXT NOT NULL);";
+    bool tweetsTableCreated = executeQuery(createTweetsTable);
 
-    return executeQuery(createUsersTable) && executeQuery(createTweetsTable);
+    ///< Проверяем успешность создания обеих таблиц
+    if (!usersTableCreated || !tweetsTableCreated) {
+        qDebug() << "Ошибка при создании таблиц!";
+        return false;
+    }
+
+    return true;
 }
+
 
 ///< Подключение к SQLite-базе данных
 bool DatabaseManager::connect(const QString& dbPath) {
@@ -57,6 +69,8 @@ bool DatabaseManager::connect(const QString& dbPath) {
         return false;
     }
     return true;
+    qDebug() << "Подключаемся к базе данных: " << dbPath;
+
 }
 
 ///< Отключение от базы данных
@@ -69,6 +83,9 @@ void DatabaseManager::disconnect() {
 
 ///< Выполнение SQL-запроса без получения результата
 bool DatabaseManager::executeQuery(const QString& query) {
+
+     qDebug() << "Выполняем SQL-запрос: " << query;
+
     QSqlQuery sqlQuery;
     if (!sqlQuery.exec(query)) {
         qDebug() << "Ошибка выполнения запроса:" << sqlQuery.lastError().text();
@@ -99,7 +116,7 @@ QByteArray DatabaseManager::auth(const QString& log, const QString& pass) {
 }
 
 ///< Регистрация пользователя
-QByteArray DatabaseManager::reg(const QString& log, const QString& pass) {
+QByteArray DatabaseManager::reg(const QString& log, const QString& pass, const QString& email) {
     QString checkQuery = QString("SELECT username FROM users WHERE username = '%1';").arg(log);
     QSqlQuery result = getQueryResult(checkQuery);
 
@@ -107,9 +124,10 @@ QByteArray DatabaseManager::reg(const QString& log, const QString& pass) {
         return "error"; ///< Пользователь уже существует
     }
 
-    QString insertQuery = QString("INSERT INTO users (username, password) VALUES ('%1', '%2');").arg(log, pass);
+    QString insertQuery = QString("INSERT INTO users (username, password, email) VALUES ('%1', '%2', '%3');").arg(log, pass, email);
     return executeQuery(insertQuery) ? "reg+" : "error";
 }
+
 
 ///< Получение постов пользователя по логину
 QByteArray DatabaseManager::getPostsByUser(const QString& log) {

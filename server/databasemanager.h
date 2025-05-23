@@ -107,9 +107,11 @@ public:
      * @brief Регистрация нового пользователя.
      * @param log Логин.
      * @param pass Пароль.
+     * @param email Электронная почта.
      * @return Результат регистрации в виде QByteArray.
      */
-    QByteArray reg(const QString& log, const QString& pass);
+    QByteArray reg(const QString& log, const QString& pass, const QString& email);
+
 
     /**
      * @brief Получение постов пользователя.
