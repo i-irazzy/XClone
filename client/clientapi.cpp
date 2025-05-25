@@ -72,7 +72,7 @@ QByteArray ClientAPI::query_to_server(QString query){
     mTcpSocket->write(query.toUtf8());
     mTcpSocket->waitForReadyRead();
 
-    QByteArray array;
+    QByteArray array = "";
 
     while(mTcpSocket->bytesAvailable()>0){
 

@@ -100,15 +100,14 @@ int PostModel::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 namespace {
 struct qt_meta_stringdata_MainWindow_t {
-    uint offsetsAndSizes[16];
+    uint offsetsAndSizes[14];
     char stringdata0[11];
     char stringdata1[12];
     char stringdata2[1];
     char stringdata3[17];
-    char stringdata4[9];
-    char stringdata5[7];
-    char stringdata6[5];
-    char stringdata7[29];
+    char stringdata4[7];
+    char stringdata5[5];
+    char stringdata6[29];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_MainWindow_t::offsetsAndSizes) + ofs), len 
@@ -118,16 +117,14 @@ Q_CONSTINIT static const qt_meta_stringdata_MainWindow_t qt_meta_stringdata_Main
         QT_MOC_LITERAL(11, 11),  // "SearchPosts"
         QT_MOC_LITERAL(23, 0),  // ""
         QT_MOC_LITERAL(24, 16),  // "onNewPostCreated"
-        QT_MOC_LITERAL(41, 8),  // "username"
-        QT_MOC_LITERAL(50, 6),  // "header"
-        QT_MOC_LITERAL(57, 4),  // "text"
-        QT_MOC_LITERAL(62, 28)   // "on_pushButtonNewPost_clicked"
+        QT_MOC_LITERAL(41, 6),  // "header"
+        QT_MOC_LITERAL(48, 4),  // "text"
+        QT_MOC_LITERAL(53, 28)   // "on_pushButtonNewPost_clicked"
     },
     "MainWindow",
     "SearchPosts",
     "",
     "onNewPostCreated",
-    "username",
     "header",
     "text",
     "on_pushButtonNewPost_clicked"
@@ -150,12 +147,12 @@ Q_CONSTINIT static const uint qt_meta_data_MainWindow[] = {
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
        1,    0,   32,    2, 0x08,    1 /* Private */,
-       3,    3,   33,    2, 0x08,    2 /* Private */,
-       7,    0,   40,    2, 0x08,    6 /* Private */,
+       3,    2,   33,    2, 0x08,    2 /* Private */,
+       6,    0,   38,    2, 0x08,    5 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::QString,    4,    5,    6,
+    QMetaType::Void, QMetaType::QString, QMetaType::QString,    4,    5,
     QMetaType::Void,
 
        0        // eod
@@ -176,7 +173,6 @@ Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<QString, std::false_type>,
         QtPrivate::TypeAndForceComplete<QString, std::false_type>,
-        QtPrivate::TypeAndForceComplete<QString, std::false_type>,
         // method 'on_pushButtonNewPost_clicked'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
@@ -190,7 +186,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         (void)_t;
         switch (_id) {
         case 0: _t->SearchPosts(); break;
-        case 1: _t->onNewPostCreated((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3]))); break;
+        case 1: _t->onNewPostCreated((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2]))); break;
         case 2: _t->on_pushButtonNewPost_clicked(); break;
         default: ;
         }

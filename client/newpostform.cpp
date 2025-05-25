@@ -1,4 +1,5 @@
 #include "newpostform.h"
+#include "clientapi.h"
 #include "ui_newpostform.h"
 
 void NewPostForm::showAndRaise()
@@ -59,7 +60,6 @@ void NewPostForm::on_pushButtonPost_clicked()
     if (header.isEmpty() || text.isEmpty()) {
         return;
     }
-
 
     emit newPostCreated(currentUser, header, text);// Отправляем сигнал с данными поста
 

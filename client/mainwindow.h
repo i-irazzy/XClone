@@ -135,7 +135,7 @@ private slots:
      * @param header Заголовок поста.
      * @param text Текст поста.
      */
-    void onNewPostCreated(QString username, QString header, QString text);
+    void onNewPostCreated(QString header, QString text);
 
     /**
      * @brief Слот для открытия формы создания нового поста по нажатию кнопки.

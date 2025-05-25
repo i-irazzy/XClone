@@ -67,12 +67,12 @@ private:
      */
     void disconnect();
 
-    /**
-     * @brief Выполнение SQL-запроса.
-     * @param query Строка SQL-запроса.
-     * @return true при успешном выполнении.
-     */
-    bool executeQuery(const QString& query);
+    // /**
+    //  * @brief Выполнение SQL-запроса.
+    //  * @param query Строка SQL-запроса.
+    //  * @return true при успешном выполнении.
+    //  */
+    // bool executeQuery(const QString& query);
 
     /**
      * @brief Получение результата SQL-запроса.
@@ -82,6 +82,17 @@ private:
     QSqlQuery getQueryResult(const QString& query);
 
 public:
+
+    /**
+     * @brief Выполнение SQL-запроса.
+     * @param query Строка SQL-запроса.
+     * @return true при успешном выполнении.
+     */
+    bool executeQuery(const QString& query);
+
+
+
+
     /**
      * @brief Получение единственного экземпляра DatabaseManager.
      * @return Указатель на экземпляр DatabaseManager
@@ -130,10 +141,12 @@ public:
     /**
      * @brief Создание нового поста.
      * @param log Логин пользователя.
+     * @param header Название поста.
      * @param post Текст поста.
      * @return Результат создания поста.
      */
-    QByteArray createPost(const QString& log, const QString& post);
+    bool createPost(const QString& username, const QString& header, const QString& post);
+
 
     /**
     * @brief Получение всех постов.

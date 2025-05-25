@@ -35,27 +35,20 @@ void AuthRegForm::on_pushButtonToReg_clicked()
     this->change_type_to_reg(ui->pushButtonLogIn->isVisible());
 }
 
-
-void AuthRegForm::on_pushButtonLogIn_clicked()
-{
+void AuthRegForm::on_pushButtonLogIn_clicked() {
     QString username = ui->lineEditLogin->text().trimmed();
     QString password = ui->lineEditPassword->text().trimmed();
 
-    if (username.isEmpty() || password.isEmpty()) {
-        QMessageBox::warning(this, "Ошибка", "Пожалуйста, заполните все поля.");
-        return;
-    }
-    if(auth(username,password)){
+    if (auth(username, password)) {
+        currentUsername = username;
+        qDebug() << "Авторизация успешна! currentUsername=" << currentUsername;
         emit auth_ok(username);
         this->close();
-    }
-    else
-    {
+    } else {
         QMessageBox::warning(this, "Ошибка", "Неверный логин или пароль.");
-        return;
     }
-
 }
+
 
 void AuthRegForm:: clear(){
     ui->lineEditLogin->clear();

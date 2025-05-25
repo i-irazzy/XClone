@@ -55,10 +55,17 @@ void MainWindow::setCurrentUser(const QString &username) {
 
 void MainWindow::SearchPosts() {
     QString query = ui->searchInput->text().trimmed();
-    if (query.isEmpty()) return;
+
+    // Если поиск пуст, запрашиваем все посты текущего пользователя
+    if (query.isEmpty() && !currentUsername.isEmpty()) {
+        query = QString("GET_POSTS_BY_USER|%1").arg(currentUsername);
+    }
+
+    qDebug() << "Запрос на сервер для поиска постов: " << query;
 
     // Отправляем запрос на сервер через ClientAPI
     QByteArray response = client->query_to_server(query);
+    qDebug() << "Ответ сервера: " << response.trimmed();
 
     QList<Post> filtered;
     QList<QByteArray> lines = response.split('\n');
@@ -70,6 +77,8 @@ void MainWindow::SearchPosts() {
             post.username = QString::fromUtf8(parts[0]);
             post.header   = QString::fromUtf8(parts[1]);
             post.text     = QString::fromUtf8(parts[2]);
+
+            qDebug() << "Добавляем пост: " << post.username << " | " << post.header << " | " << post.text;
             filtered.append(post);
         }
     }
@@ -87,8 +96,8 @@ void MainWindow::on_pushButtonNewPost_clicked() {
     newPostForm->activateWindow();
 }
 
-void MainWindow::onNewPostCreated(QString username, QString header, QString text) {
-    if (createNewPost(username, header, text)) {
+void MainWindow::onNewPostCreated(QString header, QString text) {
+    if (createNewPost(currentUsername, header, text)) {
         SearchPosts();  // Обновим посты с сервера
     } else {
         QMessageBox::warning(this, "Ошибка", "Не удалось создать новый пост.");

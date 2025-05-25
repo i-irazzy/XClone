@@ -32,10 +32,12 @@ bool logUser(const QString& username, const QString& password);
 /**
  * @brief Создаёт новый пост от имени пользователя.
  * @param username Имя пользователя, создающего пост.
+ * @param header Название поста.
  * @param data Содержимое поста.
  * @return true, если пост успешно сохранён; false — при ошибке.
  */
-bool createPost(const QString& username, const QString& data);
+bool createPost(const QString& username, const QString& header, const QString& post);
+
 
 /**
  * @brief Удаляет пост пользователя по идентификатору.

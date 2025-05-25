@@ -4,6 +4,10 @@
 #include <QString>
 #include "mainwindow.h"  ///< Для структуры Post
 
+
+extern QString currentUsername;  // Глобальная переменная для хранения имени пользователя
+
+
 struct Post;
 
 /**
@@ -41,7 +45,8 @@ bool reg(QString login, QString password, QString email);
  * @param text Содержимое поста.
  * @return true, если сервер подтвердил создание поста; false — иначе.
  */
-bool createNewPost(const QString& username, const QString& header, const QString& text);
+bool createNewPost(const QString& currentUsername, const QString& header, const QString& text);
+
 
 /**
  * @brief Получает список всех постов указанного пользователя с сервера.

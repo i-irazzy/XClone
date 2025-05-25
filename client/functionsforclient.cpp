@@ -1,31 +1,50 @@
 #include "functionsforclient.h"
 #include "clientapi.h"
 
+QString currentUsername = "";
+
+
 bool auth(QString login, QString password) {
-   // if(login == "user" && password == "123"){
-   //     return true;
-   // }
-   // return false;
     QString request = QString("AUTH|%1|%2").arg(login, password);
+    QByteArray response = ClientAPI::getInstance()->query_to_server(request);
+
+    if (response.trimmed() == "log+") {
+        currentUsername = login;  // Сохраняем имя пользователя
+        qDebug() << "Авторизация успешна! currentUsername=" << currentUsername;
+        return true;
+    }
+
+    qDebug() << "Ошибка авторизации!";
+    return false;
+}
+
+bool reg(QString login, QString password, QString email) {
+    QString request = QString("REG|%1|%2|%3").arg(login, password, email);
+    QByteArray response = ClientAPI::getInstance()->query_to_server(request);
+ClientAPI::getInstance() ->query_to_server(response);
+    if (response.trimmed() == "reg+") {
+        currentUsername = login;  // Сохраняем имя нового пользователя
+        qDebug() << "Регистрация успешна! currentUsername=" << currentUsername;
+        return true;
+    }
+
+    qDebug() << "Ошибка регистрации!";
+    return false;
+}
+
+bool createNewPost(const QString& currentUsername, const QString& header, const QString& text) {
+    if (currentUsername.isEmpty()) {
+
+        return false;
+    }
+
+    QString request = QString("CREATE_POST|%1|%2|%3").arg(currentUsername, header, text);
+
+
     QByteArray response = ClientAPI::getInstance()->query_to_server(request);
     return response.trimmed() == "OK";
 }
 
-bool reg(QString login, QString password, QString email) {
-   // if(login != "user" && password != "123"){
-   //     return true;
-   // }
-   // return false;
-    QString request = QString("REG|%1|%2|%3").arg(login, password, email);
-        QByteArray response = ClientAPI::getInstance()->query_to_server(request);
-        return response.trimmed() == "OK";
-}
-
-bool createNewPost(const QString& username, const QString& header, const QString& text) {
-    QString request = QString("CREATE|%1|%2|%3").arg(username, header, text);
-    QByteArray response = ClientAPI::getInstance()->query_to_server(request);
-    return response.trimmed() == "OK";  // Сервер должен вернуть "OK"
-}
 
 QList<Post> getPostsByUser(const QString &username)
 {

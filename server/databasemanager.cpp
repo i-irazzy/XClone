@@ -47,6 +47,7 @@ bool DatabaseManager::initializeDatabase(const QString& dbPath) {
     const QString createTweetsTable = "CREATE TABLE IF NOT EXISTS tweets ("
                                       "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                                       "username TEXT NOT NULL, "
+                                      "header TEXT NOT NULL, "   // Добавляем заголовок поста
                                       "tweet TEXT NOT NULL);";
     bool tweetsTableCreated = executeQuery(createTweetsTable);
 
@@ -105,15 +106,29 @@ QSqlQuery DatabaseManager::getQueryResult(const QString& query) {
 
 ///< Авторизация пользователя по логину и паролю
 QByteArray DatabaseManager::auth(const QString& log, const QString& pass) {
-    QString query = QString("SELECT username FROM users WHERE username = '%1' AND password = '%2';").arg(log, pass);
-    QSqlQuery result = getQueryResult(query);
+    qDebug() << "Функция auth() вызвана! Логин=" << log << ", Пароль=" << pass;
+    QSqlQuery query;
+    query.prepare("SELECT username FROM users WHERE username = ? AND password = ?");
+    query.addBindValue(log);
+    query.addBindValue(pass);
 
-    if (result.next()) {
-        return "log+";
-    } else {
+    qDebug() << "SQL-запрос на авторизацию: логин=" << log << ", пароль=" << pass;
+
+    if (!query.exec()) {
+        qDebug() << "Ошибка SQL: " << query.lastError().text();
         return "error";
     }
+
+    if (query.next()) {
+        QString foundUsername = query.value(0).toString();
+        qDebug() << "Найден username в базе: " << foundUsername;
+        return "log+";
+    }
+
+    qDebug() << "Авторизация не найдена, возвращаем error.";
+    return "error";
 }
+
 
 ///< Регистрация пользователя
 QByteArray DatabaseManager::reg(const QString& log, const QString& pass, const QString& email) {
@@ -155,11 +170,29 @@ QByteArray DatabaseManager::getPostsByText(const QString& text) {
     return "POSTS: " + board.join(" | ").toUtf8();
 }
 
-///< Создание нового поста
-QByteArray DatabaseManager::createPost(const QString& log, const QString& post) {
-    QString insertQuery = QString("INSERT INTO posts (username, post) VALUES ('%1', '%2');").arg(log, post);
-    return executeQuery(insertQuery) ? "succes" : "error";
+// ///< Создание нового поста
+// QByteArray DatabaseManager::createPost(const QString& log, const QString& post) {
+//     QString insertQuery = QString("INSERT INTO posts (username, post) VALUES ('%1', '%2');").arg(log, post);
+//     return executeQuery(insertQuery) ? "succes" : "error";
+// }
+
+bool DatabaseManager::createPost(const QString& username, const QString& header, const QString& post) {
+    qDebug() << "Функция createPost() вызвана! username=" << username << ", header=" << header << ", post=" << post;
+
+    qDebug() << "Создание поста: username=" << username << ", header=" << header << ", post=" << post;
+
+    QString insertQuery = QString("INSERT INTO posts (username, header, post) VALUES ('%1', '%2', '%3');")
+                              .arg(username, header, post);
+
+    qDebug() << "SQL-запрос: " << insertQuery;
+
+    bool success = executeQuery(insertQuery);
+    qDebug() << "Результат SQL-запроса: " << (success ? "Успех!" : "Ошибка!");
+
+    return success;
 }
+
+
 
 ///< Получение всех постов
 QByteArray DatabaseManager::getAllPosts() {

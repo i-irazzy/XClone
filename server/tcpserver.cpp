@@ -66,7 +66,7 @@ void TcpServer::slotServerRead() {
     qDebug() << "Получено от клиента: " << command; ///< Лог команды
 
     QString response = parse(command); ///< Обработка команды
-
+    qDebug() << "Отправлено клиенту: " << response;
     if (clientSocket->state() == QAbstractSocket::ConnectedState) {
         clientSocket->write(response.toUtf8()); ///< Отправка ответа клиенту
         clientSocket->flush(); ///< Гарантированная отправка данных
