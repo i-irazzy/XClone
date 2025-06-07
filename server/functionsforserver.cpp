@@ -23,7 +23,7 @@ bool createPost(const QString& username, const QString& header, const QString& t
         return false;
     }
 
-    QString query = QString("INSERT INTO posts (username, header, post) VALUES ('%1', '%2', '%3');")
+    QString query = QString("INSERT INTO posts (username, header, text) VALUES ('%1', '%2', '%3');")
                         .arg(username, header, text);
 
     qDebug() << "Выполняем SQL-запрос на создание поста: " << query;
@@ -35,10 +35,9 @@ QList<QString> getPostsByUser(const QString& username) {
     QByteArray result = DatabaseManager::getInstance()->getPostsByUser(username); ///< Получаем посты из базы
 
     QList<QString> posts;
-    if (result.startsWith("POSTS: ")) {
         QString postData = result.mid(8); ///< Убираем префикс "POSTS: "
         posts = postData.split(" | "); ///< Разделяем строку на отдельные посты
-    }
+
 
     qDebug() << "Посты получены:" << posts;
     return posts;
@@ -48,35 +47,45 @@ QList<QString> getPostsByUser(const QString& username) {
 QList<QString> getPostsByText(const QString& data) {
     QByteArray result = DatabaseManager::getInstance()->getPostsByText(data); ///< Поиск по тексту
 
-    QList<QString> posts;
-    if (result.startsWith("POSTS: ")) {
-        QString postData = result.mid(8); ///< Убираем префикс
-        posts = postData.split(" | "); ///< Делим на посты
-    }
+    QList<QString> posts = QString::fromUtf8(result).split("\n"); ///< Делим на посты
 
     qDebug() << "Посты получены:" << posts;
     return posts;
 }
 
+
 /// Удаляет пост пользователя по его идентификатору.
-bool deletePost(const QString& username, int postId) {
-    QByteArray result = DatabaseManager::getInstance()->delPost(username, postId); ///< Запрос на удаление
-    return result == "success";
+bool deletePost(int postId) {
+    // Отправляем запрос на удаление поста
+    QByteArray response = DatabaseManager::getInstance()->delPost(postId);
+
+    // Логируем ответ для дебага
+    qDebug() << "Ответ сервера на удаление: " << response;
+
+    // Проверяем успешность удаления
+    if (QString::fromUtf8(response).trimmed() == "success") {
+        qDebug() << "Пост удалён успешно!";
+        return true;
+    } else {
+        qDebug() << "Ошибка удаления поста!";
+        return false;
+    }
 }
 
-/// Возвращает список всех постов из базы данных.
+
 QList<QString> getAllPosts() {
     QByteArray result = DatabaseManager::getInstance()->getAllPosts(); ///< Запрос на получение всех постов
 
     QList<QString> feed;
-    if (result.startsWith("POSTS: ")) {
-        QString feedData = result.mid(7); ///< Убираем префикс
-        feed = feedData.split(" | "); ///< Делим строку на посты
-    }
+    QString feedData = QString::fromUtf8(result); ///< Конвертируем `QByteArray` в `QString`
+    feed = feedData.split(" | "); ///< Делим строку на посты
 
     qDebug() << "Посты получены:" << feed;
     return feed;
 }
+
+
+
 
 QString parse(const QString& command) {
     qDebug() << "Получен запрос: " << command;
@@ -123,15 +132,14 @@ QString parse(const QString& command) {
         bool result = createPost(username, header, text);
 
         qDebug() << "Результат создания поста: " << (result ? "success" : "error");
-        return result ? "success" : "error";
+        return result ? "post+" : "error";
     }
 
-    else if (action == "DELETE_POST" && parts.size() == 3) {
-        QString username = parts[1];  // НЕ currentUsername!
-        int postId = parts[2].toInt();
+    else if (action == "DELETE_POST" && parts.size() == 2) {
+        int postId = parts[1].toInt();
 
-        qDebug() << "Удаление поста: username=" << username << ", postId=" << postId;
-        return deletePost(username, postId) ? "success" : "error";
+        qDebug() << "Удаление поста: username=" << ", postId=" << postId;
+        return deletePost(postId) ? "OK" : "error";
     }
 
     else if (action == "GET_POSTS_BY_USER" && parts.size() == 2) {
@@ -139,7 +147,7 @@ QString parse(const QString& command) {
 
         qDebug() << "Запрос постов пользователя: username=" << username;
         QList<QString> posts = getPostsByUser(username);
-        return posts.isEmpty() ? "error" : "POSTS: " + posts.join(" | ");
+        return posts.isEmpty() ? "error" : posts.join(" | ");
     }
 
     else if (action == "GET_POSTS_BY_TEXT" && parts.size() == 2) {
@@ -147,14 +155,15 @@ QString parse(const QString& command) {
 
         qDebug() << "Поиск постов по тексту: " << searchText;
         QList<QString> posts = getPostsByText(searchText);
-        return posts.isEmpty() ? "error" : "POSTS: " + posts.join(" | ");
+        return posts.isEmpty() ? "error" : posts.join(" | ");
     }
 
     else if (action == "GET_ALL_POSTS") {
         qDebug() << "Запрос всех постов";
         QList<QString> posts = getAllPosts();
-        return posts.isEmpty() ? "error" : "POSTS: " + posts.join(" | ");
+        return posts.isEmpty() ? "error" : posts.join("\n");
     }
+
 
     qDebug() << "Ошибка: неизвестная команда -> " << action;
     return "unknown_command";

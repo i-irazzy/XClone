@@ -44,12 +44,12 @@ bool DatabaseManager::initializeDatabase(const QString& dbPath) {
     bool usersTableCreated = executeQuery(createUsersTable);
 
     ///< Создаем таблицу постов
-    const QString createTweetsTable = "CREATE TABLE IF NOT EXISTS tweets ("
+    const QString createPostsTable = "CREATE TABLE IF NOT EXISTS posts ("
                                       "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                                       "username TEXT NOT NULL, "
                                       "header TEXT NOT NULL, "   // Добавляем заголовок поста
-                                      "tweet TEXT NOT NULL);";
-    bool tweetsTableCreated = executeQuery(createTweetsTable);
+                                      "text TEXT NOT NULL);";
+    bool tweetsTableCreated = executeQuery(createPostsTable);
 
     ///< Проверяем успешность создания обеих таблиц
     if (!usersTableCreated || !tweetsTableCreated) {
@@ -144,37 +144,40 @@ QByteArray DatabaseManager::reg(const QString& log, const QString& pass, const Q
 }
 
 
-///< Получение постов пользователя по логину
 QByteArray DatabaseManager::getPostsByUser(const QString& log) {
     QList<QString> posts;
-    QString query = QString("SELECT post FROM posts WHERE username = '%1';").arg(log);
+    QString query = QString("SELECT username, header, text FROM posts WHERE username = '%1';").arg(log);
     QSqlQuery result = getQueryResult(query);
 
     while (result.next()) {
-        posts.append(result.value(0).toString());
+        QString username = result.value(0).toString();
+        QString header   = result.value(1).toString();
+        QString text     = result.value(2).toString();
+
+        posts.append(username + "|" + header + "|" + text);  // Формат: username|header|text
     }
 
-    return "POSTS: " + posts.join(" | ").toUtf8();
+    return posts.join("\n").toUtf8();
 }
 
 ///< Поиск постов по ключевому слову
 QByteArray DatabaseManager::getPostsByText(const QString& text) {
-    QList<QString> board;
-    QString searchQuery = QString("SELECT post FROM posts WHERE post LIKE '%%1%';").arg(text);
+    QStringList board;
+    QString searchQuery = QString("SELECT username, header, text FROM posts WHERE text LIKE '%%1%';").arg(text);
     QSqlQuery searchResult = getQueryResult(searchQuery);
 
     while (searchResult.next()) {
-        board.append(searchResult.value(0).toString());
+        QString postData = QString("%1|%2|%3")
+        .arg(searchResult.value(0).toString())  // username
+            .arg(searchResult.value(1).toString())  // header
+            .arg(searchResult.value(2).toString()); // text
+        board.append(postData);
     }
 
-    return "POSTS: " + board.join(" | ").toUtf8();
+    return board.join("\n").toUtf8();
 }
 
-// ///< Создание нового поста
-// QByteArray DatabaseManager::createPost(const QString& log, const QString& post) {
-//     QString insertQuery = QString("INSERT INTO posts (username, post) VALUES ('%1', '%2');").arg(log, post);
-//     return executeQuery(insertQuery) ? "succes" : "error";
-// }
+
 
 bool DatabaseManager::createPost(const QString& username, const QString& header, const QString& post) {
     qDebug() << "Функция createPost() вызвана! username=" << username << ", header=" << header << ", post=" << post;
@@ -194,22 +197,27 @@ bool DatabaseManager::createPost(const QString& username, const QString& header,
 
 
 
-///< Получение всех постов
 QByteArray DatabaseManager::getAllPosts() {
     QList<QString> board;
-    QString allPostsQuery = "SELECT post FROM posts;";
+    QString allPostsQuery = "SELECT id, username, header, text FROM posts;";
     QSqlQuery postsResult = getQueryResult(allPostsQuery);
 
     while (postsResult.next()) {
-        board.append(postsResult.value(0).toString());
+        int postId = postsResult.value(0).toInt();
+        QString username = postsResult.value(1).toString();
+        QString header = postsResult.value(2).toString();
+        QString text = postsResult.value(3).toString();
+
+        board.append(QString("%1|%2|%3|%4").arg(postId).arg(username).arg(header).arg(text));  // Формат: id|username|header|text
     }
 
-    return "POSTS: " + board.join(" | ").toUtf8();
+    return board.join("\n").toUtf8();
 }
 
+
 ///< Удаление поста по ID и пользователю
-QByteArray DatabaseManager::delPost(const QString& username, int postId) {
-    QString checkQuery = QString("SELECT id FROM posts WHERE id = %1 AND username = '%2';").arg(postId).arg(username);
+QByteArray DatabaseManager::delPost(int postId) {
+    QString checkQuery = QString("SELECT id FROM posts WHERE id = %1;").arg(postId);
     QSqlQuery result = getQueryResult(checkQuery);
 
     if (!result.next()) {

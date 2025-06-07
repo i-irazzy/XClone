@@ -160,7 +160,7 @@ public:
     * @param postId ID поста.
     * @return Результат удаления.
     */
-   QByteArray delPost(const QString& username, int postId);
+   QByteArray delPost(int postId);
 
 };
 

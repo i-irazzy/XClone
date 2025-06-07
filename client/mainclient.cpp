@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
         authForm.close();  // Закрываем окно авторизации
         mainWindow = new MainWindow();
         mainWindow->show();  // Открываем главное окно
+        mainWindow->SearchPosts();
     });
 
     authForm.show();  // Показываем окно авторизации

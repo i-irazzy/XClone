@@ -32,7 +32,7 @@ ClientAPI::getInstance() ->query_to_server(response);
     return false;
 }
 
-bool createNewPost(const QString& currentUsername, const QString& header, const QString& text) {
+bool createNewPost(const QString& header, const QString& text) {
     if (currentUsername.isEmpty()) {
 
         return false;
@@ -42,7 +42,7 @@ bool createNewPost(const QString& currentUsername, const QString& header, const 
 
 
     QByteArray response = ClientAPI::getInstance()->query_to_server(request);
-    return response.trimmed() == "OK";
+    return response.trimmed() == "post+";
 }
 
 
@@ -65,11 +65,11 @@ QList<Post> getPostsByUser(const QString &username)
 
 }
 
-QList<Post> getPostsByText(const QString &text)
-{
+QList<Post> getPostsByText(const QString &text) {
     QList<Post> result;
     QByteArray response = ClientAPI::getInstance()->query_to_server("GET_POSTS_BY_TEXT|" + text);
     QList<QByteArray> lines = response.split('\n');
+
     for (const QByteArray& line : lines) {
         QList<QByteArray> parts = line.split('|');
         if (parts.size() == 3) {
@@ -80,13 +80,13 @@ QList<Post> getPostsByText(const QString &text)
             result.append(post);
         }
     }
+
     return result;
 }
 
-bool deletePost(const QString &username, int postId)
-{
+bool deletePost(int postId) {
     QByteArray response = ClientAPI::getInstance()->query_to_server(
-        "DELETE_POST|" + username + "|" + QString::number(postId)
-    );
+        "DELETE_POST|" + QString::number(postId)  // Отправляем только ID поста
+        );
     return QString::fromUtf8(response).trimmed() == "OK";
 }

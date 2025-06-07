@@ -96,7 +96,7 @@ signals:
      * @param header Заголовок поста.
      * @param text Тело поста.
      */
-    void newPostCreated(const QString &username, const QString &header, const QString &text);
+    void newPostCreated(const QString &header, const QString &text);
 };
 
 #endif // NEWPOSTFORM_H

@@ -45,7 +45,7 @@ bool reg(QString login, QString password, QString email);
  * @param text Содержимое поста.
  * @return true, если сервер подтвердил создание поста; false — иначе.
  */
-bool createNewPost(const QString& currentUsername, const QString& header, const QString& text);
+bool createNewPost(const QString& header, const QString& text);
 
 
 /**
@@ -79,6 +79,6 @@ QList<Post> getPostsByText(const QString& text);
  * @param postId Уникальный идентификатор поста.
  * @return true, если пост успешно удалён; false — иначе.
  */
-bool deletePost(const QString& username, int postId);
+bool deletePost(int postId);
 
 #endif // FUNCTIONSFORCLIENT_H

@@ -5,6 +5,7 @@ debug/mainclient.o
 debug/mainwindow.o
 debug/managerforms.o
 debug/newpostform.o
+debug/moc_PostDelegate.o
 debug/moc_authregform.o
 debug/moc_clientapi.o
 debug/moc_mainwindow.o

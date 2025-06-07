@@ -30,6 +30,9 @@ struct Post {
 
     /** @brief Текст поста. */
     QString text;
+
+    /** @brief ID поста. */
+    QString postId;
 };
 
 /**
@@ -54,17 +57,28 @@ public:
 
     /**
      * @brief Возвращает количество строк в модели.
+     * @param parent Родительский индекс (по умолчанию пуст).
      */
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     /**
      * @brief Возвращает данные для заданного индекса и роли.
+     * @param index Индекс поста.
+     * @param role Роль отображения (Qt::DisplayRole).
+     * @return Данные поста в виде `QString`.
      */
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-private:
     /** @brief Список постов. */
     QList<Post> posts;
+
+signals:
+    /**
+     * @brief Сигнал при удалении поста.
+     * @param postId ID удалённого поста.
+     */
+    void postDeleted(int postId);
+
 };
 
 /**
@@ -98,6 +112,11 @@ public:
      */
     void showNewPostForm();
 
+    /**
+     * @brief Выполняет общий поиск постов (по умолчанию загружает все посты).
+     */
+    void SearchPosts();
+
 private:
     /** @brief Интерфейс, сгенерированный Qt Designer. */
     Ui::MainWindow *ui;
@@ -125,13 +144,22 @@ private:
 
 private slots:
     /**
-     * @brief Выполняет поиск постов по запросу пользователя.
+     * @brief Настраивает список постов и обработку кликов.
      */
-    void SearchPosts();
+    void setupPostList();
+
+    /**
+     * @brief Выполняет поиск постов по тексту.
+     */
+    void SearchPostsByText();
+
+    /**
+     * @brief Выполняет поиск постов по имени пользователя.
+     */
+    void SearchPostsByUser();
 
     /**
      * @brief Обрабатывает создание нового поста.
-     * @param username Имя пользователя.
      * @param header Заголовок поста.
      * @param text Текст поста.
      */
@@ -141,7 +169,6 @@ private slots:
      * @brief Слот для открытия формы создания нового поста по нажатию кнопки.
      */
     void on_pushButtonNewPost_clicked();
-
 };
 
 #endif // MAINWINDOW_H

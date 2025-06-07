@@ -1,6 +1,7 @@
 #include "functionsforclient.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "clientapi.h"
 #include <QMessageBox>
 
 PostModel::PostModel(QObject *parent) : QAbstractListModel(parent) {}
@@ -25,25 +26,37 @@ QVariant PostModel::data(const QModelIndex &index, int role) const {
         return QString("👤 %1\n📌 %2\n%3").arg(post.username, post.header, post.text);
     }
 
+    if (role == Qt::UserRole) {  // ✔️ Теперь возвращаем `int`
+        return post.postId.toInt();
+    }
+
+
+    if (role == Qt::DisplayRole && post.username == currentUsername) {
+        return QString("👤 %1\n📌 %2\n%3\n🗑 %4").arg(post.username, post.header, post.text, "Удалить пост");
+    }
+
     return QVariant();
 }
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
     ui(new Ui::MainWindow),
-    model(new PostModel(this)),
-    newPostForm(new NewPostForm(this)),
-    client(ClientAPI::getInstance())
+    model(new PostModel(this)),  // Модель списка постов
+    newPostForm(new NewPostForm(this)),  // Форма создания поста
+    client(ClientAPI::getInstance())  // API клиента
 {
     ui->setupUi(this);
 
-    ui->postList->setModel(model);
+    // Настраиваем список постов
+    setupPostList();
 
-    // Сигналы и слоты
-    connect(ui->searchButton, &QPushButton::clicked, this, &MainWindow::SearchPosts);
+    // Подключаем сигналы и слоты
+    connect(ui->searchButton, &QPushButton::clicked, this, &MainWindow::SearchPostsByText);
+    connect(ui->searchButton_2, &QPushButton::clicked, this, &MainWindow::SearchPostsByUser);
     connect(newPostForm, &NewPostForm::newPostCreated, this, &MainWindow::onNewPostCreated);
     connect(ui->pushButtonNewPost, &QPushButton::clicked, this, &MainWindow::on_pushButtonNewPost_clicked);
 }
+
 
 MainWindow::~MainWindow() {
     delete ui;
@@ -53,17 +66,52 @@ void MainWindow::setCurrentUser(const QString &username) {
     currentUser = username;
 }
 
+void MainWindow::setupPostList() {
+    ui->postList->setModel(model);
+    // ui->postList->setItemDelegate(new PostDelegate(this));  // ✔️ Добавляем кастомный делегат
+
+    // Обрабатываем клики по постам
+    connect(ui->postList, &QListView::pressed, this, [&](const QModelIndex &index) {
+        if (!index.isValid()) return;
+
+        if (QGuiApplication::mouseButtons() == Qt::RightButton) {  // Проверяем ПКМ
+            Post post = model->posts.at(index.row());
+
+            if (post.username == currentUsername) {  // Показываем меню только для своих постов
+                QMenu contextMenu;
+                QAction *deleteAction = contextMenu.addAction("Удалить пост");
+
+                connect(deleteAction, &QAction::triggered, this, [=]() {
+                    QMessageBox::StandardButton reply;
+                    reply = QMessageBox::question(this, "Удаление поста",
+                                                  "Вы хотите удалить этот пост?",
+                                                  QMessageBox::Yes | QMessageBox::No);
+                    if (reply == QMessageBox::Yes) {
+                        if (deletePost(post.postId.toInt())) {
+                            QMessageBox::information(this, "Готово!", "Пост успешно удалён.");
+                            SearchPosts();  // Обновляем список
+                        } else {
+                            QMessageBox::warning(this, "Ошибка", "Не удалось удалить пост.");
+                        }
+                    }
+                });
+
+                contextMenu.exec(QCursor::pos());
+            }
+        }
+    });
+}
+
+
+
 void MainWindow::SearchPosts() {
     QString query = ui->searchInput->text().trimmed();
 
-    // Если поиск пуст, запрашиваем все посты текущего пользователя
-    if (query.isEmpty() && !currentUsername.isEmpty()) {
-        query = QString("GET_POSTS_BY_USER|%1").arg(currentUsername);
+    if (query.isEmpty()) {
+        query = "GET_ALL_POSTS";
     }
 
-    qDebug() << "Запрос на сервер для поиска постов: " << query;
-
-    // Отправляем запрос на сервер через ClientAPI
+    qDebug() << "Отправляем запрос на сервер: " << query;
     QByteArray response = client->query_to_server(query);
     qDebug() << "Ответ сервера: " << response.trimmed();
 
@@ -71,20 +119,55 @@ void MainWindow::SearchPosts() {
     QList<QByteArray> lines = response.split('\n');
 
     for (const QByteArray &line : lines) {
-        QList<QByteArray> parts = line.split('|');  // Формат: username|header|text
-        if (parts.size() == 3) {
+        QList<QByteArray> parts = line.split('|');  // Формат: id|username|header|text
+        if (parts.size() == 4) {
             Post post;
-            post.username = QString::fromUtf8(parts[0]);
-            post.header   = QString::fromUtf8(parts[1]);
-            post.text     = QString::fromUtf8(parts[2]);
+            post.postId   = parts[0];  // ID поста (не показываем)
+            post.username = QString::fromUtf8(parts[1]);
+            post.header   = QString::fromUtf8(parts[2]);
+            post.text     = QString::fromUtf8(parts[3]);
 
-            qDebug() << "Добавляем пост: " << post.username << " | " << post.header << " | " << post.text;
             filtered.append(post);
         }
     }
 
+    qDebug() << "Обновлено постов: " << filtered.size();
     model->setPosts(filtered);
 }
+
+
+
+void MainWindow::SearchPostsByText() {
+    QString searchQuery = ui->searchInput->text().trimmed();
+
+    if (searchQuery.isEmpty()) {
+        qDebug() << "Поле поиска пусто, отменяем поиск.";
+        return;
+    }
+
+    qDebug() << "Поиск постов по тексту: " << searchQuery;
+    QList<Post> filteredPosts = getPostsByText(searchQuery);
+
+    qDebug() << "Найдено постов: " << filteredPosts.size();
+    model->setPosts(filteredPosts);
+}
+
+void MainWindow::SearchPostsByUser() {
+    QString usernameQuery = ui->searchInput->text().trimmed();
+
+    if (usernameQuery.isEmpty()) {
+        qDebug() << "Поле поиска пусто, отменяем поиск.";
+        return;
+    }
+
+    qDebug() << "Поиск постов по пользователю: " << usernameQuery;
+    QList<Post> filteredPosts = getPostsByUser(usernameQuery);
+
+    qDebug() << "Найдено постов: " << filteredPosts.size();
+    model->setPosts(filteredPosts);
+}
+
+
 
 void MainWindow::on_pushButtonNewPost_clicked() {
     newPostForm->setCurrentUser(currentUser);
@@ -97,7 +180,7 @@ void MainWindow::on_pushButtonNewPost_clicked() {
 }
 
 void MainWindow::onNewPostCreated(QString header, QString text) {
-    if (createNewPost(currentUsername, header, text)) {
+    if (createNewPost(header, text)) {
         SearchPosts();  // Обновим посты с сервера
     } else {
         QMessageBox::warning(this, "Ошибка", "Не удалось создать новый пост.");

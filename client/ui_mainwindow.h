@@ -29,6 +29,7 @@ public:
     QPushButton *searchButton;
     QListView *postList;
     QPushButton *pushButtonNewPost;
+    QPushButton *searchButton_2;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -51,10 +52,13 @@ public:
         pushButtonNewPost = new QPushButton(centralwidget);
         pushButtonNewPost->setObjectName("pushButtonNewPost");
         pushButtonNewPost->setGeometry(QRect(700, 40, 83, 29));
+        searchButton_2 = new QPushButton(centralwidget);
+        searchButton_2->setObjectName("searchButton_2");
+        searchButton_2->setGeometry(QRect(482, 90, 101, 29));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 800, 25));
+        menubar->setGeometry(QRect(0, 0, 800, 18));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
@@ -68,8 +72,9 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        searchButton->setText(QCoreApplication::translate("MainWindow", "\320\230\321\201\320\272\320\260\321\202\321\214", nullptr));
+        searchButton->setText(QCoreApplication::translate("MainWindow", "\320\235\320\260\320\271\321\202\320\270 \320\277\320\276\321\201\321\202", nullptr));
         pushButtonNewPost->setText(QCoreApplication::translate("MainWindow", "NewPost", nullptr));
+        searchButton_2->setText(QCoreApplication::translate("MainWindow", "\320\235\320\260\320\271\321\202\320\270 \320\277\320\276\320\273\321\214\320\267\320\276\320\262\320\260\321\202\320\265\320\273\321\217", nullptr));
     } // retranslateUi
 
 };

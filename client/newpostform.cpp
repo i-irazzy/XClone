@@ -61,7 +61,7 @@ void NewPostForm::on_pushButtonPost_clicked()
         return;
     }
 
-    emit newPostCreated(currentUser, header, text);// Отправляем сигнал с данными поста
+    emit newPostCreated(header, text);// Отправляем сигнал с данными поста
 
     close();
     clearFields();

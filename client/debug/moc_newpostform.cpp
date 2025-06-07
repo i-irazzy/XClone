@@ -30,10 +30,10 @@ struct qt_meta_stringdata_NewPostForm_t {
     char stringdata0[12];
     char stringdata1[15];
     char stringdata2[1];
-    char stringdata3[9];
-    char stringdata4[7];
-    char stringdata5[5];
-    char stringdata6[15];
+    char stringdata3[7];
+    char stringdata4[5];
+    char stringdata5[15];
+    char stringdata6[9];
     char stringdata7[26];
     char stringdata8[28];
 };
@@ -44,20 +44,20 @@ Q_CONSTINIT static const qt_meta_stringdata_NewPostForm_t qt_meta_stringdata_New
         QT_MOC_LITERAL(0, 11),  // "NewPostForm"
         QT_MOC_LITERAL(12, 14),  // "newPostCreated"
         QT_MOC_LITERAL(27, 0),  // ""
-        QT_MOC_LITERAL(28, 8),  // "username"
-        QT_MOC_LITERAL(37, 6),  // "header"
-        QT_MOC_LITERAL(44, 4),  // "text"
-        QT_MOC_LITERAL(49, 14),  // "setCurrentUser"
+        QT_MOC_LITERAL(28, 6),  // "header"
+        QT_MOC_LITERAL(35, 4),  // "text"
+        QT_MOC_LITERAL(40, 14),  // "setCurrentUser"
+        QT_MOC_LITERAL(55, 8),  // "username"
         QT_MOC_LITERAL(64, 25),  // "on_pushButtonPost_clicked"
         QT_MOC_LITERAL(90, 27)   // "on_pushButtonCancel_clicked"
     },
     "NewPostForm",
     "newPostCreated",
     "",
-    "username",
     "header",
     "text",
     "setCurrentUser",
+    "username",
     "on_pushButtonPost_clicked",
     "on_pushButtonCancel_clicked"
 };
@@ -78,18 +78,18 @@ Q_CONSTINIT static const uint qt_meta_data_NewPostForm[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    3,   38,    2, 0x06,    1 /* Public */,
+       1,    2,   38,    2, 0x06,    1 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       6,    1,   45,    2, 0x0a,    5 /* Public */,
-       7,    0,   48,    2, 0x08,    7 /* Private */,
-       8,    0,   49,    2, 0x08,    8 /* Private */,
+       5,    1,   43,    2, 0x0a,    4 /* Public */,
+       7,    0,   46,    2, 0x08,    6 /* Private */,
+       8,    0,   47,    2, 0x08,    7 /* Private */,
 
  // signals: parameters
-    QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::QString,    3,    4,    5,
+    QMetaType::Void, QMetaType::QString, QMetaType::QString,    3,    4,
 
  // slots: parameters
-    QMetaType::Void, QMetaType::QString,    3,
+    QMetaType::Void, QMetaType::QString,    6,
     QMetaType::Void,
     QMetaType::Void,
 
@@ -109,7 +109,6 @@ Q_CONSTINIT const QMetaObject NewPostForm::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
         QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
-        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
         // method 'setCurrentUser'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
@@ -127,7 +126,7 @@ void NewPostForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
         auto *_t = static_cast<NewPostForm *>(_o);
         (void)_t;
         switch (_id) {
-        case 0: _t->newPostCreated((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3]))); break;
+        case 0: _t->newPostCreated((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2]))); break;
         case 1: _t->setCurrentUser((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
         case 2: _t->on_pushButtonPost_clicked(); break;
         case 3: _t->on_pushButtonCancel_clicked(); break;
@@ -136,7 +135,7 @@ void NewPostForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
     } else if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
         {
-            using _t = void (NewPostForm::*)(const QString & , const QString & , const QString & );
+            using _t = void (NewPostForm::*)(const QString & , const QString & );
             if (_t _q_method = &NewPostForm::newPostCreated; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 0;
                 return;
@@ -176,9 +175,9 @@ int NewPostForm::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void NewPostForm::newPostCreated(const QString & _t1, const QString & _t2, const QString & _t3)
+void NewPostForm::newPostCreated(const QString & _t1, const QString & _t2)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t3))) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 QT_WARNING_POP

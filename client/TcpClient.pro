@@ -26,6 +26,7 @@ SOURCES += \
 
 HEADERS += \
 #    ../ConsolClient/clienapi.h \
+    PostDelegate.h \
     authregform.h \
     clientapi.h \
     functionsforclient.h \

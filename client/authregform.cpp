@@ -76,7 +76,7 @@ void AuthRegForm::on_pushButtonSignUp_clicked()
         return;
     }
 
-    QString request = QString("REGISTER|%1|%2|%3").arg(username, password, email);
+    QString request = QString("REG|%1|%2|%3").arg(username, password, email);
     QByteArray response = ClientAPI::getInstance()->query_to_server(request);
 
     if (response.trimmed() == "reg+") {
